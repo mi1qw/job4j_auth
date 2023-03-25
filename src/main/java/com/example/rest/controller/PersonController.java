@@ -2,8 +2,10 @@ package com.example.rest.controller;
 
 import com.example.rest.domain.Person;
 import com.example.rest.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
 @RequestMapping("/person")
 public class PersonController {
     private final PersonRepository persons;
+    @Autowired
+    private PasswordEncoder encoder;
 
     public PersonController(final PersonRepository persons) {
         this.persons = persons;
@@ -31,6 +35,7 @@ public class PersonController {
 
     @PostMapping("/")
     public ResponseEntity<Person> create(final @RequestBody Person person) {
+        person.setPassword(encoder.encode(person.getPassword()));
         return new ResponseEntity<>(this.persons.save(person), HttpStatus.CREATED);
     }
 
