@@ -6,7 +6,6 @@ import com.example.rest.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.example.rest.security.JWTAuthenticationFilter.ERROR_URL;
 import static com.example.rest.security.JWTAuthenticationFilter.SIGN_UP_URL;
 
 @Configuration
@@ -32,11 +32,10 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authz -> authz.requestMatchers(HttpMethod.POST, SIGN_UP_URL)
+                .authorizeHttpRequests(authz -> authz.requestMatchers(SIGN_UP_URL, ERROR_URL)
                         .permitAll()
                         .anyRequest()
-                        .authenticated())
-                .httpBasic();
+                        .authenticated());
         http.addFilter(new JWTAuthenticationFilter(auth));
         http.addFilter(new JWTAuthorizationFilter(auth));
         return http.build();

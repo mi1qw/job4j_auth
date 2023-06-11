@@ -1,5 +1,7 @@
 package com.example.rest.controller;
 
+import com.example.rest.Exception.CustomValidator;
+import com.example.rest.Exception.PersonNotFoundException;
 import com.example.rest.domain.Person;
 import com.example.rest.service.PersonService;
 import lombok.AllArgsConstructor;
@@ -8,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/person")
 @AllArgsConstructor
 public class PersonController {
     private final PersonService personService;
+    private final CustomValidator validator;
 
     @GetMapping("/")
     public List<Person> findAll() {
@@ -23,18 +25,21 @@ public class PersonController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Person> findById(final @PathVariable int id) {
-        Optional<Person> person = personService.findById(id);
-        return new ResponseEntity<>(person.orElse(new Person()),
-                person.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+        validator.check(() -> id == 0, "Wrong id");
+        Person person = personService.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException("Person Not Found"));
+        return ResponseEntity.ok(person);
     }
 
     @PostMapping("/")
     public ResponseEntity<Person> create(final @RequestBody Person person) {
+        validator.check(person);
         return new ResponseEntity<>(personService.save(person), HttpStatus.CREATED);
     }
 
     @PutMapping("/")
     public ResponseEntity<?> update(final @RequestBody Person person) {
+        validator.check(person);
         if (personService.update(person)) {
             return ResponseEntity.ok().build();
         }
@@ -44,6 +49,7 @@ public class PersonController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(final @PathVariable int id) {
+        validator.check(() -> id == 0, "Wrong id");
         if (personService.deleteById(id)) {
             return ResponseEntity.ok().build();
         }
