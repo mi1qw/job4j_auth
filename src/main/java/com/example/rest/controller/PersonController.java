@@ -34,7 +34,8 @@ public class PersonController {
     @PostMapping("/")
     public ResponseEntity<Person> create(final @RequestBody Person person) {
         validator.check(person);
-        return new ResponseEntity<>(personService.save(person), HttpStatus.CREATED);
+        var pers = personService.save(person);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pers);
     }
 
     @PutMapping("/")

@@ -4,6 +4,7 @@ import com.example.rest.Exception.CustomValidator;
 import com.example.rest.domain.Person;
 import com.example.rest.repository.PersonRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +20,11 @@ public class UserController {
     private final CustomValidator validator;
 
     @PostMapping("/sign-up")
-    public void signUp(final @RequestBody Person person) {
+    public ResponseEntity<?> signUp(final @RequestBody Person person) {
         validator.check(person);
         person.setPassword(encoder.encode(person.getPassword()));
         users.save(person);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/all")
