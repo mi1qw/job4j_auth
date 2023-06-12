@@ -48,6 +48,19 @@ public class PersonController {
                 .body("error updating person");
     }
 
+    @PatchMapping("/")
+    public ResponseEntity<?> patch(final @RequestBody Person person) {
+        validator.check(() -> person.getId() == 0, "error patching");
+        Person newPerson = personService.findById(person.getId())
+                .map(p -> p.update(person))
+                .orElseThrow(() -> new PersonNotFoundException("Person Not Found"));
+        if (personService.update(newPerson)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("error updating person");
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(final @PathVariable int id) {
         validator.check(() -> id == 0, "Wrong id");

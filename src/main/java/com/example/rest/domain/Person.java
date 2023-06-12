@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,9 @@ public class Person {
     private int id;
     private String login;
     private String password;
+
+    public Person update(final Person newPerson) {
+        this.password = Optional.ofNullable(newPerson.password).orElse(password);
+        return new Person(id, login, password);
+    }
 }
