@@ -22,8 +22,19 @@ public class Person {
     private String login;
     private String password;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Address address;
+
+    public Person(int id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.address = null;
+    }
+
     public Person update(final Person newPerson) {
         this.password = Optional.ofNullable(newPerson.password).orElse(password);
-        return new Person(id, login, password);
+        this.address = Optional.ofNullable(newPerson.address).orElse(address);
+        return new Person(id, login, password, address);
     }
 }

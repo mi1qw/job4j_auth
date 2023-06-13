@@ -2,7 +2,12 @@ package com.example.rest.controller;
 
 import com.example.rest.Exception.CustomValidator;
 import com.example.rest.domain.Person;
+import com.example.rest.dto.AddressMapper;
+import com.example.rest.dto.UserDto;
+import com.example.rest.dto.UserMapper;
 import com.example.rest.repository.PersonRepository;
+import com.example.rest.service.AddressService;
+import com.example.rest.service.PersonService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,12 +23,27 @@ public class UserController {
     private final PersonRepository users;
     private final PasswordEncoder encoder;
     private final CustomValidator validator;
+    private final AddressService addressService;
+    private final UserMapper userMapper;
+    private final AddressMapper addressMapper;
+    private final PersonService personService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(final @RequestBody Person person) {
-        validator.check(person);
-        person.setPassword(encoder.encode(person.getPassword()));
-        users.save(person);
+    public ResponseEntity<?> signUp(final @RequestBody UserDto userDto) {
+        validator.check(userDto);
+        personService.save(userDto);
+
+//        var person = userMapper.dtoToPerson(userDto);
+//        var addresses = userDto.getCountry() == null ? addressService.defaultAddress()
+//                : addressMapper.dtoToAddress(userDto);
+//        person.setAddress(addresses);
+
+//        Address address = new Address();
+//        var person = new Person(0,
+//                userDto.getLogin(),
+//                userDto.getPassword(),
+//                address);
+//        users.save(person);
         return ResponseEntity.ok().build();
     }
 

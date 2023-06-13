@@ -11,7 +11,7 @@ class PersonTest {
     @Test
     void updateOnlyFieldsNonNull() {
         Person pers = new Person(1, "login", "password");
-        Person newPers = new Person(1, null, "111");
+        Person newPers = new Person(1, (String) null, "111");
         Person updated = pers.update(newPers);
         log.info("{}", updated);
         assertThat(updated).usingRecursiveComparison()

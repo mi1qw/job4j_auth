@@ -3,6 +3,7 @@ package com.example.rest.controller;
 import com.example.rest.Exception.CustomValidator;
 import com.example.rest.Exception.PersonNotFoundException;
 import com.example.rest.domain.Person;
+import com.example.rest.dto.UserDto;
 import com.example.rest.service.PersonService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,7 @@ public class PersonController {
 
     @PatchMapping("/")
     public ResponseEntity<?> patch(final @RequestBody Person person) {
+        UserDto userDto = new UserDto(null, null, null, null, null, null);
         validator.check(() -> person.getId() == 0, "error patching");
         Person newPerson = personService.findById(person.getId())
                 .map(p -> p.update(person))
