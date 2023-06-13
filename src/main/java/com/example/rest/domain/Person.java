@@ -1,20 +1,16 @@
 package com.example.rest.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "person")
-public class Person {
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Person extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -22,8 +18,32 @@ public class Person {
     private String login;
     private String password;
 
-    public Person update(final Person newPerson) {
-        this.password = Optional.ofNullable(newPerson.password).orElse(password);
-        return new Person(id, login, password);
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Address address;
+
+    public Person(final int id, final String login,
+                  final String password, final boolean isChanged) {
+        super(isChanged);
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.address = null;
+    }
+
+    public Person(final int id, final String login,
+                  final String password) {
+        this(id, login, password, false);
+    }
+
+    public Person patch(final Person newPerson) {
+        var isChanged = super.isChanged();
+        var passwordNew = update(password, newPerson.password);
+        var copy = new Person(
+                id,
+                login,
+                passwordNew,
+                super.isChanged());
+        setChanged(isChanged);
+        return copy;
     }
 }

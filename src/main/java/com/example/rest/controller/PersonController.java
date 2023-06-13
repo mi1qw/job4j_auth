@@ -3,8 +3,10 @@ package com.example.rest.controller;
 import com.example.rest.Exception.CustomValidator;
 import com.example.rest.Exception.PersonNotFoundException;
 import com.example.rest.domain.Person;
+import com.example.rest.dto.UserDto;
 import com.example.rest.service.PersonService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/person")
 @AllArgsConstructor
+@Slf4j
 public class PersonController {
     private final PersonService personService;
     private final CustomValidator validator;
@@ -26,7 +29,7 @@ public class PersonController {
     @GetMapping("/{id}")
     public ResponseEntity<Person> findById(final @PathVariable int id) {
         validator.check(() -> id == 0, "Wrong id");
-        Person person = personService.findById(id)
+        var person = personService.findById(id)
                 .orElseThrow(() -> new PersonNotFoundException("Person Not Found"));
         return ResponseEntity.ok(person);
     }
@@ -49,12 +52,9 @@ public class PersonController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<?> patch(final @RequestBody Person person) {
-        validator.check(() -> person.getId() == 0, "error patching");
-        Person newPerson = personService.findById(person.getId())
-                .map(p -> p.update(person))
-                .orElseThrow(() -> new PersonNotFoundException("Person Not Found"));
-        if (personService.update(newPerson)) {
+    public ResponseEntity<?> patch(final @RequestBody UserDto userDto) {
+        validator.check(userDto);
+        if (personService.patch(userDto)) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT)

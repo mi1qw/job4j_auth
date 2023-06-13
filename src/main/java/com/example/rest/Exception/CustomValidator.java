@@ -1,6 +1,7 @@
 package com.example.rest.Exception;
 
 import com.example.rest.domain.Person;
+import com.example.rest.dto.UserDto;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Supplier;
@@ -26,5 +27,14 @@ public class CustomValidator {
                         || password == null || password.isEmpty(),
                 "Username and password mustn't be empty",
                 person);
+    }
+
+    public void check(final UserDto userDto) {
+        String login = userDto.getLogin();
+        String password = userDto.getPassword();
+        check(() -> login == null || login.isEmpty()
+                        || password == null || password.isEmpty(),
+                "Username and password mustn't be empty",
+                userDto);
     }
 }
