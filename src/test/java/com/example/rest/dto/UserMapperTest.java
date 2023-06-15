@@ -29,7 +29,7 @@ class UserMapperTest {
         Person person = userMapper.dtoToPerson(USER_DTO);
         assertThat(person).usingRecursiveComparison()
                 .isEqualTo(new Person(0, "login",
-                        "password", null));
+                        "password"));
         log.info("{}", person);
     }
 

@@ -1,5 +1,6 @@
 package com.example.rest.security;
 
+import com.example.rest.Exception.PersonNotFoundException;
 import com.example.rest.domain.Person;
 import com.example.rest.repository.PersonRepository;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        Person user = personRepository.findByLogin(username);
+        Person user = personRepository.findByLogin(username)
+                .orElseThrow(()->new PersonNotFoundException("Person Not Found"));
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }

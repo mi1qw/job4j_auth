@@ -1,11 +1,13 @@
 package com.example.rest.service;
 
+import com.example.rest.Exception.PersonNotFoundException;
 import com.example.rest.domain.Address;
 import com.example.rest.domain.Person;
 import com.example.rest.dto.AddressMapper;
 import com.example.rest.dto.UserDto;
 import com.example.rest.dto.UserMapper;
 import com.example.rest.repository.PersonRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,6 @@ public class PersonService {
     private final AddressMapper addressMapper;
     private final AddressService addressService;
 
-
     public List<Person> findAll() {
         return repo.findAll();
     }
@@ -31,17 +32,15 @@ public class PersonService {
         return repo.findById(id);
     }
 
-    public Person save(final UserDto userDto) {
-        Address address;
-        var person = userMapper.dtoToPerson(userDto);
-        if (userDto.getCountry() != null) {
-            address = addressMapper.dtoToAddress(userDto);
-            addressService.save(address);
-        } else {
-            address = addressService.defaultAddress();
-        }
-        person.setAddress(address);
+    public Optional<Person> findByLogin(final String login) {
+        return repo.findByLogin(login);
+    }
 
+    @Transactional
+    public Person save(final UserDto userDto) {
+        var person = userMapper.dtoToPerson(userDto);
+        var address = addressService.save(userDto);
+        person.setAddress(address);
         person.setPassword(encoder.encode(person.getPassword()));
         return repo.save(person);
     }
@@ -52,11 +51,33 @@ public class PersonService {
     }
 
     public boolean update(final Person person) {
-        return repo.updateById(person.getLogin(),
-                person.getPassword(), person.getId()) > 0;
+        if (person.isChanged()){
+            person.setPassword(encoder.encode(person.getPassword()));
+        }
+        return repo.updateById(
+                person.getLogin(),
+                person.getPassword(),
+                person.getAddress(),
+                person.getId()
+        ) > 0;
     }
 
     public boolean deleteById(final int id) {
         return repo.deleteById(id) > 0;
+    }
+
+    @Transactional
+    public boolean patch(UserDto userDto) {
+        Person prsDto = userMapper.dtoToPerson(userDto);
+        Address adrDto = addressMapper.dtoToAddress(userDto);
+
+        Person personDB = findByLogin(prsDto.getLogin())
+                .orElseThrow(() -> new PersonNotFoundException("Person Not Found"));
+        var idAddrBD = personDB.getAddress().getId();
+        Address newAddress = addressService.patch(idAddrBD, adrDto);
+
+        Person patched = personDB.patch(prsDto);
+        patched.setAddress(newAddress);
+        return update(patched);
     }
 }

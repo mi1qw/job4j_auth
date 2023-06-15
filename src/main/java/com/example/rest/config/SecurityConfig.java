@@ -33,9 +33,11 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz.requestMatchers(SIGN_UP_URL, ERROR_URL)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated());
+                                .permitAll()
+                                .anyRequest()
+                        .authenticated()
+//                                .permitAll()
+                );
         http.addFilter(new JWTAuthenticationFilter(auth));
         http.addFilter(new JWTAuthorizationFilter(auth));
         return http.build();

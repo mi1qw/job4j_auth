@@ -9,12 +9,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PersonTest {
 
     @Test
-    void updateOnlyFieldsNonNull() {
-        Person pers = new Person(1, "login", "password");
-        Person newPers = new Person(1, (String) null, "111");
-        Person updated = pers.update(newPers);
-        log.info("{}", updated);
-        assertThat(updated).usingRecursiveComparison()
-                .isEqualTo(new Person(1, "login", "111"));
+    void patch() {
+        Person personDB = new Person(
+                1,
+                "login",
+                "password");
+        Person newPerson = new Person(
+                1,
+                (String) null,
+                "111");
+
+        Person updated = personDB.patch(newPerson);
+        log.info("\n{}\n{}", personDB, updated);
+
+        assertThat(updated)
+                .isEqualTo(new Person(
+                        1,
+                        "login",
+                        null));
+        assertThat(updated.isChanged()).isTrue();
+        log.info("{} field", updated.isChanged());
     }
 }
