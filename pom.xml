@@ -17,6 +17,31 @@
     <properties>
         <java.version>17</java.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>github-actions</id>
+            <activation>
+                <property>
+                    <name>github.event_name</name>
+                    <value>push</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M5</version>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -69,12 +94,12 @@
         <dependency>
             <groupId>org.mapstruct.extensions.spring</groupId>
             <artifactId>mapstruct-spring-annotations</artifactId>
-            <version>0.1.2</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct.extensions.spring</groupId>
             <artifactId>mapstruct-spring-extensions</artifactId>
-            <version>0.1.2</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -163,6 +188,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
