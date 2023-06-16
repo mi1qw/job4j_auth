@@ -1,6 +1,7 @@
 package com.example.rest.controller;
 
 import com.example.rest.Exception.CustomValidator;
+import com.example.rest.Exception.Operation;
 import com.example.rest.Exception.PersonNotFoundException;
 import com.example.rest.domain.Person;
 import com.example.rest.dto.UserDto;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,14 +37,16 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(final @RequestBody Person person) {
+    public ResponseEntity<Person> create(final @Validated(Operation.OnCreate.class)
+                                         @RequestBody Person person) {
         validator.check(person);
         var pers = personService.save(person);
         return ResponseEntity.status(HttpStatus.CREATED).body(pers);
     }
 
     @PutMapping("/")
-    public ResponseEntity<?> update(final @RequestBody Person person) {
+    public ResponseEntity<?> update(final @Validated(Operation.OnUpdate.class)
+                                    @RequestBody Person person) {
         validator.check(person);
         if (personService.update(person)) {
             return ResponseEntity.ok().build();
@@ -52,7 +56,8 @@ public class PersonController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<?> patch(final @RequestBody UserDto userDto) {
+    public ResponseEntity<?> patch(final @Validated(Operation.OnUpdate.class)
+                                   @RequestBody UserDto userDto) {
         validator.check(userDto);
         if (personService.patch(userDto)) {
             return ResponseEntity.ok().build();

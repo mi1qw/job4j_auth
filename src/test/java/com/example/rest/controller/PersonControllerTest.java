@@ -66,7 +66,7 @@ class PersonControllerTest {
     @Test
     void signUpUserDtoAndPatchWithAddressShouldSaveAndPatchAddress() {
         UserDto userDto = UserDto.builder()
-                .login("loginTest")
+                .login("abc@mail.com")
                 .password("passwordTest")
                 .country("countryTest")
                 .city("cityTest")
@@ -85,7 +85,7 @@ class PersonControllerTest {
         log.info("\n\n\n{}\n{}", person, address);
 
         userDto = UserDto.builder()
-                .login("loginTest")
+                .login("abc@mail.com")
                 .password("password")
                 .country("USA")
                 .city("New York")
@@ -124,7 +124,7 @@ class PersonControllerTest {
 
         var json = """
                 {
-                    "login": "loginTest",
+                    "login": "abc@mail.com",
                     "password": "passwordTest",
                     "street": "Wall Street"
                 }
@@ -163,7 +163,7 @@ class PersonControllerTest {
     @Test
     void signUpUserDtoAndPatchWithAddressShouldSaveAndPatchAddress1() {
         UserDto userDto = UserDto.builder()
-                .login("loginTest")
+                .login("abc@mail.com")
                 .password("passwordTest")
                 .country("countryTest")
                 .city("cityTest")
@@ -183,7 +183,7 @@ class PersonControllerTest {
 
         var json = """
                 {
-                    "login": "loginTest",
+                    "login": "abc@mail.com",
                     "password": "passwordTest"
                 }
                 """;
@@ -221,7 +221,7 @@ class PersonControllerTest {
     @Test
     void signUpUserDtoWithoutAddressAndPatchWithAddressShouldSaveAndPatchAddress() {
         UserDto userDto = UserDto.builder()
-                .login("loginTest")
+                .login("abc@mail.com")
                 .password("passwordTest")
                 .build();
         ResponseEntity<UserDto> response = restTemplate
@@ -238,7 +238,7 @@ class PersonControllerTest {
         /*--------------------------------------------------------------*/
 
         userDto = UserDto.builder()
-                .login("loginTest")
+                .login("abc@mail.com")
                 .password("password")
                 .country("USA")
                 .city("New York")
@@ -271,7 +271,7 @@ class PersonControllerTest {
     @Test
     void signUpUserDtoWithoutAddressAndPatchWithEmptyAddressShouldNotSaveAddress() {
         UserDto userDto = UserDto.builder()
-                .login("loginTest")
+                .login("abc@mail.com")
                 .password("passwordTest")
                 .build();
         ResponseEntity<UserDto> response = restTemplate
@@ -289,7 +289,7 @@ class PersonControllerTest {
 
         var json = """
                 {
-                    "login": "loginTest",
+                    "login": "abc@mail.com",
                     "password": "passwordTest"
                 }
                 """;

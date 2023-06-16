@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -17,7 +18,7 @@ import java.util.HashMap;
 public class GlobalExceptionHandler {
     private final ObjectMapper objectMapper;
 
-    @ExceptionHandler(value = {EmptyArgumentException.class})
+    @ExceptionHandler(value = {EmptyArgumentException.class, MethodArgumentNotValidException.class})
     public void handleException(final Exception e,
                                 final HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());

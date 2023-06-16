@@ -5,5 +5,5 @@ create table person
     password varchar(2000)
 );
 
-insert into person (login, password) values ('admin', '123');
+insert into person (login, password) values ('admin@mail.com', '123');
 insert into person (login, password) values ('user', '123');

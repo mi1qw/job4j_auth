@@ -1,9 +1,13 @@
 package com.example.rest.domain;
 
+import com.example.rest.Exception.NotExistingAccount;
+import com.example.rest.Exception.Operation;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "person")
@@ -15,7 +19,13 @@ public class Person extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
+    @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)"
+            + "+[a-zA-Z]{2,6}$", message = "Invalid email address",
+            groups = Operation.OnCreate.class)
+    @NotExistingAccount(groups = Operation.OnCreate.class)
     private String login;
+    @Length(min = 6, message = "Password must be at least 6 characters",
+            groups = {Operation.OnCreate.class, Operation.OnUpdate.class})
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,6 +1,7 @@
 package com.example.rest.controller;
 
 import com.example.rest.Exception.CustomValidator;
+import com.example.rest.Exception.Operation;
 import com.example.rest.domain.Person;
 import com.example.rest.dto.AddressMapper;
 import com.example.rest.dto.UserDto;
@@ -11,6 +12,7 @@ import com.example.rest.service.PersonService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +31,9 @@ public class UserController {
     private final PersonService personService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(final @RequestBody UserDto userDto) {
+    @Validated({Operation.OnCreate.class})
+    public ResponseEntity<?> signUp(final @Validated(Operation.OnCreate.class)
+                                    @RequestBody UserDto userDto) {
         validator.check(userDto);
         personService.save(userDto);
         return ResponseEntity.ok().build();
